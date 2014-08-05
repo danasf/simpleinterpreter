@@ -7,10 +7,8 @@
 	* If operator manipulates tokens to LEFT (+), give it a LEFT DENOTATIVE FUNCTION (LED)
 	* If does NOT manipulate token to LEFT (-), give it a NULL DENOTATIVE FUNCTION (NUD). Identifiers and Numbers also get this
 
-
 	http://effbot.org/zone/simple-top-down-parsing.htm
 	http://eli.thegreenplace.net/2010/01/02/top-down-operator-precedence-parsing/
-	http://www.codeproject.com/Articles/345888/How-to-write-a-simple-interpreter-in-JavaScript
 
 */
 
@@ -40,18 +38,17 @@ var parse = function (tokens) {
 		{ key:",", nud:null},
 		{ key:")", nud:null },
 		{ key:"!END", nud:null },
-		{ key:"(", nud: function() { parseParen(); } },
+		{ key:"(", nud: function() { return parseParen(); } },
 		{ key:"number", nud: function(num) { return num; } }
 
 	];
 
-
-
-
+	// get the current token and interpret
 	var getToken = function () { 
 		return interpretToken(tokens[tokenStep]); 
 	};
 
+	// step forward, return next token
 	var advanceToken = function() {
 		tokenStep++;
 		return getToken();
@@ -151,7 +148,7 @@ var parse = function (tokens) {
 	var parseParen = function ()  {
 		var val = expression(2);
 		advanceToken();
-		return value;
+		return val;
 	};
 
 	// identifier
