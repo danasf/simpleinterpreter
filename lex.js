@@ -1,4 +1,8 @@
-
+/*
+	Simple Lexer in JS
+	Starting from this tutorial and experimenting on my own!
+	http://www.codeproject.com/Articles/345888/How-to-write-a-simple-interpreter-in-JavaScript
+*/
 var lexer = function(input) {
 
 	console.log("Full string:",input);

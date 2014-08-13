@@ -10,12 +10,12 @@
 	http://effbot.org/zone/simple-top-down-parsing.htm
 	http://eli.thegreenplace.net/2010/01/02/top-down-operator-precedence-parsing/
 
-*/
+	*/
 
-var parse = function (tokens) {
-	var parseTree = [];
-	var symbol_table = {};
-	var tokenStep=0;
+	var parse = function (tokens) {
+		var parseTree = [];
+		var symbol_table = {};
+		var tokenStep=0;
 
 	// binding powers of various operators
 	// prefix -a, infix - is a-b
@@ -40,7 +40,6 @@ var parse = function (tokens) {
 		{ key:"!END", nud:null },
 		{ key:"(", nud: function() { return parseParen(); } },
 		{ key:"number", nud: function(num) { return num; } }
-
 	];
 
 	// get the current token and interpret
@@ -60,9 +59,9 @@ var parse = function (tokens) {
 		lbp - left binding power (operator precedence)
 		led - left denotative function
 		nud - null denotative function, 
-	*/
-	var symbol = function(id, nud, lbp, led) {
-		
+		*/
+		var symbol = function(id, nud, lbp, led) {
+
 		// symbol = look up symbol by type in table, OR new object
 		var sym = symbol_table[id] || {};
 		
@@ -163,16 +162,16 @@ var parse = function (tokens) {
 				} while (getToken().type === ",");
 				if(getToken().type !== ")") { throw "We need a closing parenthesis, yo!"; }
 			}
-		advanceToken();
+			advanceToken();
 
 		// return an object
 		return { 
 			type: "call",
 			args: args,
 			name: name.value
-			};
-		}
-		return name;
+		};
+	}
+	return name;
 	};
 
 	// parse equality
