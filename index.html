@@ -36,6 +36,18 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    <script src="lex.js"></script>
+    <script src="parse.js"></script>
+    <script src="eval.js"></script>
+    <script type="text/javascript">
+        function DoSomething(input) {
+            var tokens = lexer(input);
+            var tree = parse(tokens);
+            var output = evaluate(tree);
+            console.log(output); 
+        };
+    </script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>  </body>
 </html>

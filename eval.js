@@ -6,6 +6,7 @@ var evaluate = function(tree) {
 	
 	var output = "";
 
+	// simple mathmatical operations
 	var operations = {
 		"+" : function(a,b) {
 			return a + b;
@@ -29,48 +30,65 @@ var evaluate = function(tree) {
 	};
 
 	// pre-defined functions
-	var funcs = {
-		sin: Math,sin,
-		cos: Math.cos,
-		round: Math.round
-	};
+	var funcs = { 	};
+
+	// arguments passed
+	var args = {};
 
 	// constants and pre-defined variables
 	var variables = { pi: 3.1415, meaning_of_life: 42};
 
-	var parseItem = function(node) {
+	var evalNode = function(node) {
+		console.log("Evaluating",node.type);
+		// literal number
 		if(node.type === "number") {
 			return node.value;
 		}
-		else if (operators[node.type]) {
-			if (node.left) { return operators[node.type](parseItem(node.left),parseItem(node.right)); }
+
+		// operators
+		else if (operations[node.type]) {
+			if (node.left) { return operations[node.type](evalNode(node.left),evalNode(node.right)); }
 		}
 
+		// identifier
 		else if (node.type === "identifier") {
-
+			var val = args.hasOwnProperty(node.value) ? args[node.value] : variables[node.value];
+			if (typeof val === "undefined") { throw node.value + " is undefined"; }
+			return val;
 		}
 
+		// an assign
 		else if (node.type === "assign") {
-			variables[node.name] = parseItem(node.value);
+			variables[node.name] = evalNode(node.value);
 		}
 
+		// are you a call
 		else if (node.type ==="call") {
 			var args = node.args.map(function(val,i) {
-				parseItem(this);
+				evalNode(this);
 			});
-			return functions[node.name].apply(null,args);
+			return funcs[node.name].apply(null,args);
 		}
-
+		// are you a function
 		else if (node.type === "function") {
+			funcs[node.name] = function() {
+				node.args.forEach(function(val,i) {
+					args[val.value] = arguments[i];
+				});
+				// clear args
+				args = {};
+				// return 
+				return evalNode(node.value);
+			};
 
 		}
 	};
-
+	// for everything in the tree, evaluate!
 	tree.forEach(function(val,i) { 
-		var res = parseItem(val);
+		var res = evalNode(val);
 		if(typeof(res) != undefined) { 
 			output += res + "\n";
 		 }
 	});
-
+	return output;
 };
