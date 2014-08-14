@@ -35,23 +35,30 @@ var evaluate = function(tree) {
 		round: Math.round
 	};
 
-	// variables
-	var variables = { };
+	// constants and pre-defined variables
+	var variables = { pi: 3.1415, meaning_of_life: 42};
 
 	var parseItem = function(node) {
 		if(node.type === "number") {
 			return node.value;
 		}
+		else if (operators[node.type]) {
+			if (node.left) { return operators[node.type](parseItem(node.left),parseItem(node.right)); }
+		}
+
 		else if (node.type === "identifier") {
 
 		}
 
 		else if (node.type === "assign") {
-
+			variables[node.name] = parseItem(node.value);
 		}
 
 		else if (node.type ==="call") {
-
+			var args = node.args.map(function(val,i) {
+				parseItem(this);
+			});
+			return functions[node.name].apply(null,args);
 		}
 
 		else if (node.type === "function") {
