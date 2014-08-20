@@ -33,6 +33,7 @@ var lexer = function(input) {
 
 	// add to tokens
 	var addToken = function(type,value) {
+		console.log("adding t:%s,v:%s",type,value);
 		tokens.push({ type: type, value: value });
 	};
 
@@ -45,8 +46,8 @@ var lexer = function(input) {
 
 		// if an operator, add that and advance
 		else if (isOperator(c)) {
-			console.log("operator",c);
-			addToken("operator",c);
+			//console.log(c);
+			addToken(c);
 			i++;
 		}
 		// if a number
@@ -58,7 +59,7 @@ var lexer = function(input) {
 				// add to num
 				num += input.charAt(i);
 			}
-			console.log("number",num);
+			//console.log("number",num);
 			addToken("number",num);
 
 		} 
@@ -70,11 +71,12 @@ var lexer = function(input) {
 			while(isIdentifier(input.charAt(++i)) && i < input.length) {
 				ident += input.charAt(i);
 			}
-			console.log("identifier",ident);
+			//console.log("identifier",ident);
 			addToken("identifier",ident);
 		}
 		else { console.log("unknown token"); }
 	}
-	addToken("!END","!END");
+	addToken("(end)");
+	console.log(tokens);
 	return tokens;
 };
