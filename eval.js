@@ -48,12 +48,14 @@ var evaluate = function(tree) {
 		// operators
 		else if (operations[node.type]) {
 			if (node.left) { return operations[node.type](evalNode(node.left),evalNode(node.right)); }
+			else { 	return operators[node.type](parseNode(node.right)); }
 		}
 
 		// identifier
 		else if (node.type === "identifier") {
+			console.log(node);
 			var val = args.hasOwnProperty(node.value) ? args[node.value] : variables[node.value];
-			if (typeof val === "undefined") { throw node.value + " is undefined"; }
+			if (typeof val == undefined) { throw node.value + " is undefined"; }
 			return val;
 		}
 
@@ -64,10 +66,10 @@ var evaluate = function(tree) {
 
 		// are you a call
 		else if (node.type ==="call") {
-			var args = node.args.map(function(val,i) {
+			node.args = node.args.map(function(val,i) {
 				evalNode(this);
 			});
-			return funcs[node.name].apply(null,args);
+			return funcs[node.name].apply(null,node.args);
 		}
 		// are you a function
 		else if (node.type === "function") {
@@ -86,7 +88,7 @@ var evaluate = function(tree) {
 	// for everything in the tree, evaluate!
 	tree.forEach(function(val,i) { 
 		var res = evalNode(val);
-		if(typeof(res) != undefined) { 
+		if(typeof(res) !== "undefined") { 
 			output += res + "\n";
 		 }
 	});

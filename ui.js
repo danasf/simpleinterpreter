@@ -18,7 +18,8 @@
     Background.prototype.draw = function() {
         this.makeCircle(this.canvas.width/3,this.canvas.height/3,this.rad,"#E80C7A"); 
         this.makeCircle(2*this.canvas.width/3,2*this.canvas.height/3,this.rad,"#B0382F"); 
-        this.makeCircle(this.canvas.width-this.rad,this.rad,this.rad,"#982E4B"); // tr
+        this.makeCircle(this.canvas.width-this.rad,this.rad,this.rad,"#982E4B"); 
+        this.makeCircle(this.rad,this.canvas.height-this.rad,this.rad,"#982E4B"); // tr
         document.getElementById("myBody").style.backgroundImage = "url('"+this.canvas.toDataURL()+"')";
     };
 
@@ -39,7 +40,10 @@
     var codeToParse = document.getElementById("codeToParse");
 
     document.getElementById("parse").addEventListener('click',function(e){
-        document.getElementById("responseData").innerHTML = evalInput(codeToParse.value).split('\n').join('<br />');
+        var out = evalInput(codeToParse.value).split('\n').join('<br />');
+        console.log(out);
+        document.getElementById("responseData").innerHTML = out;
+
     },false);
 
 });

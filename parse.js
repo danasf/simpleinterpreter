@@ -12,55 +12,19 @@
 
 	*/
 
-	var parse = function (tokens) {
-		var parseTree = [];
-		var symbol_table = {};
-		var tokenStep=0;
-
-	// binding powers of various operators
-	// prefix -a, infix - is a-b
-
-	var toPrefix = [
-		{ key:"-",rbp:10 }
-	];
-
-	var toInfix = [
-		{ key:"^", lbp:9, rbp:6 },
-		{ key:"/", lbp:4 },
-		{ key:"*", lbp:4 },
-		{ key:"%", lbp:4 },
-		{ key:"+",lbp:3 },
-		{ key:"-",lbp:3 }
-	];
-
-	var toSymbol = 
-	[
-		{ key:",", nud:null},
-		{ key:")", nud:null },
-		{ key:"!END", nud:null },
-		{ key:"(", nud: function() { return parseParen(); } },
-		{ key:"number", nud: function(num) { return num; } }
-	];
-
-	// get the current token and interpret
-	var getToken = function () { 
-		return interpretToken(tokens[tokenStep]); 
-	};
-
-	// step forward, return next token
-	var advanceToken = function() {
-		tokenStep++;
-		return getToken();
-	};
+var parse = function (tokens) {
+	var parseTree = [];
+	var symbol_table = {};
+	var tokenStep=0;
 
 	/* 
-		http://eli.thegreenplace.net/2010/01/02/top-down-operator-precedence-parsing/
+	http://eli.thegreenplace.net/2010/01/02/top-down-operator-precedence-parsing/
 
-		lbp - left binding power (operator precedence)
-		led - left denotative function
-		nud - null denotative function, 
-		*/
-		var symbol = function(id, nud, lbp, led) {
+	lbp - left binding power (operator precedence)
+	led - left denotative function
+	nud - null denotative function, 
+	*/
+	var symbol = function(id, nud, lbp, led) {
 
 		// symbol = look up symbol by type in table, OR new object
 		var sym = symbol_table[id] || {};
@@ -79,31 +43,39 @@
 	// reads in a token, creates a symbol
 	var interpretToken = function (token) {
 		var sym;
-		if(token.type === undefined) { token.type = null; }
-		if(token.type === "operator") {
-			console.log("Now interpreting:", token.type,symbol_table[token.value]);
-			sym = Object.create(symbol_table[token.value]);
-		}
-		else { 		
-			console.log("Now interpreting:", token.type,symbol_table[token.type]);
-			sym = Object.create(symbol_table[token.type]); 
-		}
+		console.log("Now interpreting:", token.type,token.value);
+
+		sym = Object.create(symbol_table[token.type]); 
 		sym.type = token.type;
 		sym.value = token.value;
 		return sym;
 	};
 
+
+
+	// get the current token and interpret
+	var getToken = function () { 
+		return interpretToken(tokens[tokenStep]); 
+	};
+
+	// step forward, return next token
+	var advanceToken = function() {
+		tokenStep++;
+		return getToken();
+	};
+
 	// TDOP algorithm
 	var expression = function (rbp) {
 		
-		// set RBP to default of 2 if null
-		//var rbp = rbp || 2;
+		// set RBP to default of 1 if null
+		//var rbp = rbp || 1;
 		
 		var left;
 		// get a new token and advance
 		var t = getToken();
 		advanceToken();
-		if(!t.nud) { throw "Unknown token type:" + t.type; }
+		console.log(t); 
+		//if(!t.nud) { throw "Unknown token type:" + t.type;  }
 		// in this new token, set nud of self to left  
 		left = t.nud(t);
 
@@ -119,7 +91,7 @@
 		}
 		return left;
 	};
-	
+
 	// id, left binding, right binding, left deno
 	var infix = function (id, lbp, rbp, led) {
 		// right binding power = rbp if set, else lbp
@@ -142,6 +114,77 @@
 			};
 		});
 	};
+
+
+	// binding powers of various operators
+	// prefix -a, infix - is a-b
+
+	var toPrefix = [
+		{ key:"-",rbp:10 }
+	];
+
+	var toInfix = [
+		{ key:"^", lbp:9, rbp:6 },
+		{ key:"/", lbp:4 },
+		{ key:"*", lbp:4 },
+		{ key:"%", lbp:4 },
+		{ key:"+",lbp:3 },
+		{ key:"-",lbp:3 },
+		{ key:"=", lbp:1, rbp:2, led:function(left) {
+			if (left.type === "call") {
+			for (var i = 0; i < left.args.length; i++ ) {
+				if ( left.args[i].type !== "identifier") { throw "This argument name isn't valid"; }
+			}
+			return {
+				type: "function",
+				name: left.name,
+				args: left.args,
+				value: expression(2)
+			};
+		} else if ( left.type === "identifier") {
+			return {
+				type: "assign",
+				name: left.value,
+				value: expression(2)
+			};
+		}
+		else { throw "Invalid value"; }
+		} }
+	];
+
+	var toSymbol = 
+	[
+		{ key:",", nud:null},
+		{ key:")", nud:null },
+		{ key:"(end)", nud:null },
+		{ key:"(", nud: function() {
+			var val = expression(2);
+			advanceToken();
+			return val;
+		} },
+		{ key:"identifier",nud:function(name) { 
+			if (getToken().type === "(") {
+				var args = [];
+				if (tokens[i + 1].type === ")") { advance();}
+			else {
+				do {
+					advanceToken();
+					args.push(expression(2));
+				} while (getToken().type === ",");
+				if (getToken().type !== ")") throw "Expected closing parenthesis ')'";
+			}
+			advanceToken();
+			return {
+				type: "call",
+				args: args,
+				name: name.value
+			};
+		}
+		return name;
+		} },
+		{ key:"number", nud: function(num) { return num; } }
+	];
+
 
 	// NUD helpers for various operators
 	var parseParen = function ()  {
@@ -197,14 +240,14 @@
 	};
 
 
-	toInfix.map(function(item) { infix(item.key,item.lbp,item.rbp,item.led); });
+	toInfix.forEach(function(item) { infix(item.key,item.lbp,item.rbp,item.led); });
 
-	toPrefix.map(function(item) { prefix(item.key,item.rbp); });
+	toPrefix.forEach(function(item) { prefix(item.key,item.rbp); });
 
-	toSymbol.map(function(item) { symbol(item.key,item.nud); });
+	toSymbol.forEach(function(item) { symbol(item.key,item.nud); });
 
 
-	while(getToken().type !== "!END") {
+	while(getToken().type !== "(end)") {
 		parseTree.push(expression(0));
 	}
 
