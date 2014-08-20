@@ -1,4 +1,7 @@
-A simple TDOP / Pratt parser for mathmatical operations.
+Simple Interpreter
+=========
+
+A simple TDOP / Pratt parser for mathematical operations.
 
 Resources for writing your own
 
