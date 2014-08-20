@@ -9,7 +9,7 @@ var evaluate = function(tree) {
 	// simple mathmatical operations
 	var operations = {
 		"+" : function(a,b) {
-			return a + b;
+			return parseInt(a,10) + parseInt(b,10);
 		},
 		"-" : function(a,b) {
 			if(typeof(b) == undefined) { return -a; }

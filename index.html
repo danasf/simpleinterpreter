@@ -6,48 +6,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="../../favicon.ico">
 
-    <title>Starter Template for Bootstrap</title>
-
-	<!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-
-	<!-- Optional theme -->
-	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-
+    <title>Simple Interpreter</title>
+    <link href='http://fonts.googleapis.com/css?family=ABeeZee' rel='stylesheet' type='text/css'>
+    <style type="text/css">
+        #myBody { background:#713045; }
+        .container { width:450px; margin:10px auto; background:#fff; padding:20px; border-radius: 5px; }
+        h1,h3 { font-size:35px; font-family: 'ABeeZee', sans-serif; color:#222; text-transform: uppercase; }
+        input,textarea { border:2px solid #999;  padding:10px; }
+        button { padding:10px; color:#fff; font-size: 2em; background:#713045; border:0px; border-radius: 5px  }
+        #bgcanvas { display: none; }
+        blockquote { margin-left: 5px; border-left: 3px #713045 solid; padding-left: 10px; color:#444;  }
+        a,a:visited { color:#713045 ;}
+    </style>
     </head>
 
-  <body>
-
-
+  <body id="myBody">
     <div class="container">
 
       <div class="starter-template">
-        <h1>Interpret come code</h1>
-        <p><textarea cols="50" rows="10"></textarea></p>
-        <button id="lex">Run Lexer</button>
+        <h1>Interpret this!</h1>
+        <p>Simple <a href="http://en.wikipedia.org/wiki/Pratt_parser">TDOP/Pratt parser</a> in JS</p>
+        <p>Try things like:</p>
+        <blockquote>
+            1+1<br />
+            2^3<br />
+            2+1*2<br />
+            (2+1)*2<br />
+            3 % 2<br />
+            (1+2)*(3+4)+3<br />
+        </blockquote>
+        <p><textarea cols="50" rows="10" id="codeToParse"></textarea></p>
         <button id="parse">Run Parser</button>
+        <h3>Response</h3>
+        <div id="response"><blockquote id="responseData"></blockquote></div>
       </div>
-
+    <canvas id="bgcanvas" width="150" height="150"></canvas>
     </div><!-- /.container -->
 
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="lex.js"></script>
-    <script src="parse.js"></script>
-    <script src="eval.js"></script>
-    <script type="text/javascript">
-        function DoSomething(input) {
-            var tokens = lexer(input);
-            var tree = parse(tokens);
-            var output = evaluate(tree);
-            console.log(output); 
-        };
-    </script>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>  </body>
-</html>
+    <script type="text/javascript" src="./lex.js"></script>
+    <script type="text/javascript" src="./parse.js"></script>
+    <script type="text/javascript" src="./eval.js"></script>
+    <script type="text/javascript" src="./ui.js"></script>
+ </html>
